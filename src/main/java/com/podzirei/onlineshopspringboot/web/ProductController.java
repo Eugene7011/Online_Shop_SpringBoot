@@ -3,17 +3,10 @@ package com.podzirei.onlineshopspringboot.web;
 import com.podzirei.onlineshopspringboot.entity.Product;
 import com.podzirei.onlineshopspringboot.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,27 +19,44 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<Product> findAll(){
+    public List<Product> findAll() {
         List<Product> products = productService.findAll();
         logger.info("products {}", products);
-
-        //convert to json
 
         return products;
     }
 
-    @PostMapping
-    protected void addProduct(@RequestBody Product product) throws IOException {
+    @PostMapping(path = "/add")
+    protected void addProduct(@RequestBody Product product) {
         logger.info("add product {}", product);
         productService.add(product);
-
     }
 
     @GetMapping(path = "/{id}")
     public Product findById(@PathVariable int id) {
         Product product = productService.findById(id);
-        logger.info("products {}", product);
+        logger.info("findById {}", product);
 
         return product;
+    }
+
+    @GetMapping(path = "/search/{name}")
+    public Product findByName(@PathVariable String name) {
+        Product product = productService.findByName(name);
+        logger.info("findByName {}", product);
+
+        return product;
+    }
+
+    @PutMapping(path = "/update")
+    protected void updateProduct(@RequestBody Product product) {
+        logger.info("update {}", product);
+        productService.update(product);
+    }
+
+    @DeleteMapping(path = "/delete/{id}")
+    protected boolean deleteProduct(@PathVariable int id) {
+        logger.info("delete {}", id);
+        return productService.delete(id);
     }
 }

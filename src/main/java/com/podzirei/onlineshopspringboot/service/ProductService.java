@@ -11,4 +11,10 @@ public interface ProductService {
     void add(Product product);
 
     Product findById(int id);
+
+    Product findByName(String name);
+
+    void update(Product product);
+
+    boolean delete(int id);
 }

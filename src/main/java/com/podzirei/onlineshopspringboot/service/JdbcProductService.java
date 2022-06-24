@@ -11,7 +11,11 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class JdbcProductService implements ProductService{
+public class JdbcProductService implements ProductService {
+    @Override
+    public Product findByName(String name) {
+        return productRepository.findByName(name);
+    }
 
     private final ProductRepository productRepository;
 
@@ -20,7 +24,7 @@ public class JdbcProductService implements ProductService{
         return productRepository.findAll();
     }
 
-    public void add (Product product){
+    public void add(Product product) {
         product.setCreationDate(LocalDateTime.now());
         productRepository.add(product);
     }
@@ -28,5 +32,15 @@ public class JdbcProductService implements ProductService{
     @Override
     public Product findById(int id) {
         return productRepository.findById(id);
+    }
+
+    @Override
+    public void update(Product product) {
+        productRepository.update(product);
+    }
+
+    @Override
+    public boolean delete(int id) {
+        return productRepository.delete(id);
     }
 }

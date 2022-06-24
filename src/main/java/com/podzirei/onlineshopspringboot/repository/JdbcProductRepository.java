@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-import java.util.Optional;
-
 @Repository
 @RequiredArgsConstructor
 public class JdbcProductRepository implements ProductRepository{
@@ -22,7 +20,8 @@ public class JdbcProductRepository implements ProductRepository{
             "VALUES (:name, :price, :date);";
     private static final String DELETE_SQL = "DELETE FROM products WHERE id=?;";
     private static final String UPDATE_SQL = "UPDATE products SET name=?, price=? WHERE id=?;";
-    private static final String SEARCH_SQL = "SELECT id, name, price, creation_date FROM products WHERE  (name) LIKE ?;";
+    private static final String SEARCH_SQL_BY_ID = "SELECT id, name, price, creation_date FROM products WHERE id=?;";
+    private static final String SEARCH_SQL_BY_NAME = "SELECT id, name, price, creation_date FROM products WHERE name=?;";
 
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -44,9 +43,25 @@ public class JdbcProductRepository implements ProductRepository{
 
     @Override
     public Product findById(int id) {
-        return null;
+        return jdbcTemplate.queryForObject(SEARCH_SQL_BY_ID, productRowMapper, id);
     }
 
+    @Override
+    public Product findByName(String name) {
+        return jdbcTemplate.queryForObject(SEARCH_SQL_BY_NAME, productRowMapper, name);
+    }
 
+    @Override
+    public void update(Product product) {
 
+        jdbcTemplate.update(UPDATE_SQL,
+                    product.getName(),
+                    product.getPrice(),
+                    product.getId());
+    }
+
+    @Override
+    public boolean delete(int id) {
+        return jdbcTemplate.update(DELETE_SQL, id) > 0;
+    }
 }
